@@ -12162,6 +12162,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = {
@@ -12178,12 +12193,48 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             IDtextSelect: '',
 
             TEXT: '',
+            dataText: [],
+            viewText: '',
+            selected: [],
 
             data2: ''
         };
     },
 
     methods: {
+        reloadText: function reloadText() {
+            var data = _.clone(this.dataText);
+            for (var i = 0; i < this.selected.length; i++) {
+                var res = data[this.selected[i]].match(/<\/?[^>]+>/g);
+                console.log(res);
+                if (res == null) {
+                    data[this.selected[i]] = '<span class="red">' + data[this.selected[i]] + '</span>';
+                    console.log(data[this.selected[i]]);
+                } else {
+
+                    var arraySTR = data[this.selected[i]].split(/<\/?[^>]+>/g);
+                    for (var j = 0; j < arraySTR.length; j++) {
+                        if (arraySTR[j] == '') {
+                            arraySTR[j] = res.shift();
+                        } else {
+                            arraySTR[j] = '<span class="red">' + arraySTR[j] + '</span>';
+                        }
+                    }
+                    data[this.selected[i]] = arraySTR.join('');
+                }
+            }
+            // this.selected.forEach((item, i) => {
+            //
+            // });
+
+            this.viewText = data.join(' ');
+        },
+        showText: function showText(id) {
+            console.log(id);
+            var data = this.dataText;
+
+            this.viewText = data.join(' ');
+        },
         getWords: function getWords() {
             var _this = this;
 
@@ -12220,6 +12271,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 console.log(response);
                 _this3.data2 = response;
                 _this3.TEXT = response.data;
+                _this3.dataText = _this3.TEXT['TEXT']['CONTENT'].split(' ');
+                _this3.viewText = _this3.dataText.join(' ');
+                // .replace(/<\/?[^>]+>/g,'').replace(/[-.?!)(,:]/g, '')
             }).catch(function (error) {
                 _this3.data2 = error.response;
             });
@@ -14672,7 +14726,7 @@ exports = module.exports = __webpack_require__(34)();
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n.size-form-lecsem{\n    height: 30rem !important;\n}\n.red{\n    color: red;\n}\n", ""]);
 
 // exports
 
@@ -31928,7 +31982,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "row"
   }, [_c('div', {
-    staticClass: "col-md-4"
+    staticClass: "col-md-3"
   }, [_c('lable', {
     attrs: {
       "for": "SECTIONS"
@@ -32041,8 +32095,49 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }, [_vm._v(_vm._s(item['TEXTNAME']))])
   })) : _vm._e()], 1), _vm._v(" "), _c('div', {
-    staticClass: "col-md-8"
-  }, [(_vm.TEXT !== '') ? _c('div', [_c('h3', [_vm._v("Текст:")]), _vm._v(" "), _c('p', [_vm._v(_vm._s(_vm.TEXT['TEXT']['CONTENT']))])]) : _vm._e()])]), _vm._v(" "), (_vm.TEXT !== '') ? _c('div', [_c('table', {
+    staticClass: "col-md-6"
+  }, [_c('h3', [_vm._v("Текст:")]), _vm._v(" "), (_vm.TEXT !== '') ? _c('div', {
+    domProps: {
+      "innerHTML": _vm._s(_vm.viewText)
+    }
+  }, [_vm._v("\n                    TEXT['TEXT']['CONTENT']\n                ")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-3"
+  }, [(_vm.TEXT !== '') ? _c('div', [(_vm.dataText != '') ? _c('lable', {
+    attrs: {
+      "for": "data1"
+    }
+  }, [_vm._v("Названия лексем")]) : _vm._e(), _vm._v(" "), (_vm.dataText != '') ? _c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.selected),
+      expression: "selected"
+    }],
+    staticClass: "form-control size-form-lecsem",
+    attrs: {
+      "multiple": "",
+      "id": "data1"
+    },
+    on: {
+      "click": function($event) {
+        _vm.reloadText()
+      },
+      "change": function($event) {
+        _vm.selected = Array.prototype.filter.call($event.target.options, function(o) {
+          return o.selected
+        }).map(function(o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val
+        })
+      }
+    }
+  }, _vm._l((_vm.dataText), function(item, id) {
+    return _c('option', {
+      domProps: {
+        "value": id
+      }
+    }, [_vm._v(_vm._s(item.replace(/<\/?[^>]+>/g, '').replace(/[-.?!)(,:]/g, '')))])
+  })) : _vm._e()], 1) : _vm._e()])]), _vm._v(" "), (_vm.TEXT !== '') ? _c('div', [_c('table', {
     staticClass: "table"
   }, [_c('caption', [_vm._v("Паспорт")]), _vm._v(" "), _c('tbody', [_c('tr', [_c('th', [_vm._v("Собиратель")]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm.TEXT['COLLECTOR']['COLLECTORNAME']))])]), _vm._v(" "), _c('tr', [_c('th', [_vm._v("Исполнитель")]), _vm._v(" "), _c('td', [_vm._v("\n                        " + _vm._s(_vm.TEXT['CONTRACTORS']['CONTRACTORNAME']) + ",\n\n                        " + _vm._s(_vm.TEXT['AREA2']['AREANAME']) + " /\n                        " + _vm._s(_vm.TEXT['COUNTRY2']['COUNTRYNAME']) + " /\n                        " + _vm._s(_vm.TEXT['VILLAGE2']['VILLAGENAME']) + "\n                        , " + _vm._s(_vm.TEXT['CONTRACTORS']['RYEAR']) + " г.р.\n                    ")])]), _vm._v(" "), _c('tr', [_c('th', [_vm._v("Место записи")]), _vm._v(" "), _c('td', [_c('p', [_vm._v(_vm._s(_vm.TEXT['AREA']['AREANAME']) + " /\n                        " + _vm._s(_vm.TEXT['COUNTRY']['COUNTRYNAME']) + " /\n                        " + _vm._s(_vm.TEXT['VILLAGE']['VILLAGENAME']))])])]), _vm._v(" "), _c('tr', [_c('th', [_vm._v("Место хранения")]), _vm._v(" "), _c('td', [_c('p', [_vm._v(_vm._s(_vm.TEXT['LOCATIONS']['LOCATIONNAME']))])])]), _vm._v(" "), _c('tr', [_c('th', [_vm._v("Год фиксации")]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm.TEXT['TEXT']['RECYEAR']))])]), _vm._v(" "), _c('tr', [_c('th', [_vm._v("Звуковой файл")]), _vm._v(" "), _c('td', [_c('a', {
     attrs: {

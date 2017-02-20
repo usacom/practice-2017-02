@@ -2,7 +2,7 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <lable for="SECTIONS">Выберете SECTION</lable>
                     <select multiple class="form-control" id="SECTIONS" v-model="IDsectionSelect">
                         <option v-for="item in SECTIONS" :value="item['ID_SECTION']" @click="getWords()">
@@ -27,20 +27,29 @@
                     </select>
                 </div>
 
-                <div class="col-md-8">
-                    <div v-if="TEXT!==''">
-                        <h3>Текст:</h3>
-                        <p>{{TEXT['TEXT']['CONTENT']}}</p>
+                <div class="col-md-6">
+                    <h3>Текст:</h3>
+                    <div v-if="TEXT!==''" v-html="viewText">
+                        TEXT['TEXT']['CONTENT']
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div v-if="TEXT!==''">
+                        <!--<pre>{{TEXT['TEXT']['CONTENT'].replace(/<\/?[^>]+>/g,'').replace("[-.?!)(,:]", '').split(' ')}}</pre>-->
+                        <lable v-if="dataText!=''" for="data1">Названия лексем</lable>
 
+                        <select v-if="dataText!=''" multiple  @click="reloadText()" class="form-control size-form-lecsem" id="data1" v-model="selected">
+                            <option v-for="(item, id) in dataText"  :value="id">{{item.replace(/<\/?[^>]+>/g,'').replace(/[-.?!)(,:]/g, '')}}</option>
+                        </select>
+                        <!--<br>-->
+                        <!--<pre>{{selected}}</pre>-->
+                    </div>
+                </div>
             </div>
 
 
             <div v-if="TEXT!==''">
                 <!--<pre>{{TEXT}}</pre>-->
-
-
                 <table class="table">
                     <caption>Паспорт</caption>
                     <tbody>
@@ -97,6 +106,12 @@
     </div>
 </template>
 <style lang="css">
+    .size-form-lecsem{
+        height: 30rem !important;
+    }
+    .red{
+        color: red;
+    }
 </style>
 <script type="text/babel">
 
@@ -114,11 +129,47 @@
                 IDtextSelect: '',
 
                 TEXT: '',
+                dataText: [],
+                viewText: '',
+                selected: [],
 
                 data2: '',
             }
         },
         methods: {
+            reloadText(){
+                let data = _.clone(this.dataText);
+                for(let i = 0; i< this.selected.length; i++){
+                    let res = data[this.selected[i]].match(/<\/?[^>]+>/g);
+                    console.log(res);
+                    if(res==null){
+                        data[this.selected[i]] ='<span class="red">'+data[this.selected[i]]+'</span>';
+                        console.log(data[this.selected[i]]);
+                    }else {
+
+                        let arraySTR = data[this.selected[i]].split(/<\/?[^>]+>/g);
+                        for(let j = 0; j< arraySTR.length; j++){
+                            if(arraySTR[j]==''){
+                                arraySTR[j] = res.shift();
+                            }else {
+                                arraySTR[j] = '<span class="red">'+arraySTR[j]+'</span>';
+                            }
+                        }
+                        data[this.selected[i]] = arraySTR.join('');
+                    }
+                }
+                // this.selected.forEach((item, i) => {
+                //
+                // });
+
+                this.viewText = data.join(' ');
+            },
+            showText(id){
+                console.log(id);
+                let data = this.dataText;
+
+                this.viewText = data.join(' ');
+            },
             getWords(){
                 this.WORDS = '';
                 this.TEXTS = '';
@@ -156,6 +207,9 @@
                             console.log(response);
                             this.data2 = response;
                             this.TEXT = response.data;
+                            this.dataText = this.TEXT['TEXT']['CONTENT'].split(' ');
+                            this.viewText = this.dataText.join(' ');
+                            // .replace(/<\/?[^>]+>/g,'').replace(/[-.?!)(,:]/g, '')
                         })
                         .catch((error) => {
                             this.data2 = error.response;

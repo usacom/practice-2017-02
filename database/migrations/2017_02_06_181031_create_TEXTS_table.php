@@ -19,7 +19,7 @@ class CreateTEXTSTable extends Migration
             $table->integer('TEXTORDER')->nullable();
             $table->text('CONTENT')->nullable();
             $table->integer('RECYEAR')->nullable();
-            $table->string('AUDIO', 120)->nullable();
+            $table->string('AUDIO', 255)->nullable();
             $table->integer('ID_COLLECTOR')->nullable();
             $table->integer('ID_CONTRACTOR')->nullable();
             $table->integer('ID_LOCATION')->nullable();
