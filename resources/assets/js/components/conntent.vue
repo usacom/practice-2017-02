@@ -1,75 +1,91 @@
 <template>
     <div class="panel panel-default">
         <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <lable for="SECTIONS">Выберете SECTION</lable>
+                    <select multiple class="form-control" id="SECTIONS" v-model="IDsectionSelect">
+                        <option v-for="item in SECTIONS" :value="item['ID_SECTION']" @click="getWords()">
+                            {{item['SECTIONNAME']}}
+                        </option>
+                    </select>
 
+                    <br>
 
-            <lable for="SECTIONS">Выберете SECTION</lable>
-            <select class="form-control" id="SECTIONS" v-model="IDsectionSelect">
-                <option v-for="item in SECTIONS" :value="item['ID_SECTION']">{{item['SECTIONNAME']}}</option>
-            </select>
-            <button class="btn btn-default" type="button" v-if="IDsectionSelect!=''" @click="getWords()">Отправить
-            </button>
+                    <lable v-if="WORDS!=''" for="WORDS">Выберете WORD</lable>
+                    <select v-if="WORDS!=''" multiple class="form-control" v-model="IDwordsSelect" id="WORDS">
+                        <option v-for="item in WORDS" :value="item['ID_WORD']" @click="getTexts()">
+                            {{item['WORDNAME']}}
+                        </option>
+                    </select>
 
-            <br>
+                    <br>
 
-            <lable v-if="WORDS!=''" for="WORDS">Выберете WORD</lable>
-            <select v-if="WORDS!=''" class="form-control" v-model="IDwordsSelect" id="WORDS">
-                <option v-for="item in WORDS" :value="item['ID_WORD']">{{item['WORDNAME']}}</option>
-            </select>
-            <button class="btn btn-default" type="button" v-if="IDwordsSelect!=''" @click="getTexts()">Отправить
-            </button>
+                    <lable v-if="TEXTS!=''" for="TEXTS">Выберете TEXT</lable>
+                    <select v-if="TEXTS!=''" multiple class="form-control" v-model="IDtextSelect" id="TEXTS">
+                        <option v-for="(item, id) in TEXTS" :value="id" @click="getText()">{{item['TEXTNAME']}}</option>
+                    </select>
+                </div>
 
-            <br>
+                <div class="col-md-8">
+                    <div v-if="TEXT!==''">
+                        <h3>Текст:</h3>
+                        <p>{{TEXT['TEXT']['CONTENT']}}</p>
+                    </div>
+                </div>
 
-            <lable v-if="TEXTS!=''" for="TEXTS">Выберете TEXT</lable>
-            <select v-if="TEXTS!=''" class="form-control" v-model="IDtextSelect" id="TEXTS">
-                <option v-for="(item, id) in TEXTS" :value="id">{{item['TEXTNAME']}}</option>
-            </select>
-            <button class="btn btn-default" type="button" v-if="IDtextSelect!==''" @click="getText()">Отправить
-            </button>
+            </div>
+
 
             <div v-if="TEXT!==''">
+                <!--<pre>{{TEXT}}</pre>-->
 
-                <h3>Текст:</h3>
-                <p>{{TEXT['TEXT']['CONTENT']}}</p>
-                Audio
-                <audio controls>
-                    <source :src="TEXT['TEXT']['AUDIO']" type="audio/mpeg">
-                    Тег audio не поддерживается вашим браузером.
-                </audio>
-
-                <h3>Имя: {{TEXT['TEXT']['TEXTNAME']}}</h3>
 
                 <table class="table">
                     <caption>Паспорт</caption>
                     <tbody>
+
                     <tr>
-                        <th>TEXTORDER</th>
-                        <td>{{TEXT['TEXT']['TEXTORDER']}}</td>
-                    </tr>
-                    <tr>
-                        <th>RECYEAR</th>
-                        <td>{{TEXT['TEXT']['RECYEAR']}}</td>
-                    </tr>
-                    <tr>
-                        <th>COLLECTOR</th>
+                        <th>Собиратель</th>
                         <td>{{TEXT['COLLECTOR']['COLLECTORNAME']}}</td>
                     </tr>
                     <tr>
-                        <th>CONTRACTORS</th>
-                        <td>{{TEXT['CONTRACTORS']['CONTRACTORNAME']}}</td>
+                        <th>Исполнитель</th>
+                        <td>
+                            {{TEXT['CONTRACTORS']['CONTRACTORNAME']}},
+
+                            {{TEXT['AREA2']['AREANAME']}} /
+                            {{TEXT['COUNTRY2']['COUNTRYNAME']}} /
+                            {{TEXT['VILLAGE2']['VILLAGENAME']}}
+                            , {{TEXT['CONTRACTORS']['RYEAR']}} г.р.
+                        </td>
                     </tr>
                     <tr>
-                        <th>LOCATIONS</th>
+                        <th>Место записи</th>
+                        <td><p>{{TEXT['AREA']['AREANAME']}} /
+                            {{TEXT['COUNTRY']['COUNTRYNAME']}} /
+                            {{TEXT['VILLAGE']['VILLAGENAME']}}</p></td>
+                    </tr>
+                    <tr>
+                        <th>Место хранения</th>
                         <td><p>{{TEXT['LOCATIONS']['LOCATIONNAME']}}</p></td>
                     </tr>
                     <tr>
-                        <th>WORDS</th>
-                        <td><p>{{TEXT['WORDS']['WORDNAME']}}</p></td>
+                        <th>Год фиксации</th>
+                        <td>{{TEXT['TEXT']['RECYEAR']}}</td>
                     </tr>
                     <tr>
-                        <th>VILLAGE</th>
-                        <td><p>{{TEXT['VILLAGE']['VILLAGENAME']}}</p></td>
+                        <th>Звуковой файл</th>
+                        <td><a :href="TEXT['TEXT']['AUDIO']">{{TEXT['TEXT']['AUDIO']}}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Воспроизведение файла</th>
+                        <td>
+                            <audio controls>
+                                <source :src="TEXT['TEXT']['AUDIO']" type="audio/mpeg">
+                                Тег audio не поддерживается вашим браузером.
+                            </audio>
+                        </td>
                     </tr>
 
                     </tbody>
@@ -104,6 +120,9 @@
         },
         methods: {
             getWords(){
+                this.WORDS = '';
+                this.TEXTS = '';
+                this.TEXT = '';
                 axios.get('/api/getWords/' + this.IDsectionSelect)
                         .then((response) => {
                             console.log(response);
@@ -117,6 +136,8 @@
 
             },
             getTexts(){
+                this.TEXTS = '';
+                this.TEXT = '';
                 axios.get('/api/getTexts/' + this.IDwordsSelect)
                         .then((response) => {
                             console.log(response);
@@ -129,6 +150,7 @@
 
             },
             getText(){
+                this.TEXT = '';
                 axios.get('/api/getText/' + this.TEXTS[this.IDtextSelect]['ID_TEXT'])
                         .then((response) => {
                             console.log(response);

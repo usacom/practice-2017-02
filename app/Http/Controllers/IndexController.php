@@ -24,6 +24,12 @@ class IndexController extends Controller
         $LOCATIONS = \DB::table('LOCATIONS')->where('ID_LOCATION', $TEXT->ID_LOCATION)->first();
         $WORDS = \DB::table('WORDS')->where('ID_WORD', $TEXT->ID_WORD)->first();
         $VILLAGE = \DB::table('VILLAGE')->where('ID_VILLAGE', $TEXT->ID_VILLAGE)->first();
+        $COUNTRY = \DB::table('COUNTRY')->where('ID_COUNTRY', $VILLAGE->ID_COUNTRY)->first();
+        $AREA = \DB::table('AREA')->where('ID_AREA', $COUNTRY->ID_AREA)->first();
+
+        $VILLAGE2 = \DB::table('VILLAGE')->where('ID_VILLAGE', $CONTRACTOR->ID_VILLAGE)->first();
+        $COUNTRY2 = \DB::table('COUNTRY')->where('ID_COUNTRY', $VILLAGE->ID_COUNTRY)->first();
+        $AREA2 = \DB::table('AREA')->where('ID_AREA', $COUNTRY->ID_AREA)->first();
 
 
         return response()->json([
@@ -33,6 +39,11 @@ class IndexController extends Controller
             'LOCATIONS'=>$LOCATIONS,
             'WORDS'=>$WORDS,
             'VILLAGE'=>$VILLAGE,
+            'COUNTRY'=>$COUNTRY,
+            'AREA'=>$AREA,
+            'VILLAGE2'=>$VILLAGE,
+            'COUNTRY2'=>$COUNTRY,
+            'AREA2'=>$AREA,
         ]);
     }
 

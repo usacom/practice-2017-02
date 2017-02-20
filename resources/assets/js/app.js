@@ -13,9 +13,14 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
-Vue.component('contents', require('./components/conntent.vue'));
+// Vue.component('example', require('./components/Example.vue'));
+let conntents = require('./components/conntent.vue');
+// Vue.component('conntents', require('./components/conntent.vue'));
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    components: {
+        // <my-component> will only be available in parent's template
+        'conntentss': conntents
+    }
 });
